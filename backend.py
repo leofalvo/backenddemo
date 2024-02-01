@@ -3,7 +3,6 @@ from flask import Flask, g, request, render_template # Flask imports
 
 import nltk
 nltk.download("punkt")
-import numpy as np
 from FlagEmbedding import FlagReranker
 from sentence_transformers import SentenceTransformer, util
 import numpy as np
@@ -34,6 +33,7 @@ def process_text():
     shared = []
     shared[0] = encoded
     shared[1] = textdict
+    shared[2] = {}
     g.shared_data = shared
 
 
@@ -42,16 +42,23 @@ def process_text():
 def index():
     data = request.json
     query = data.get('query', '')
-    query = model.encode(query)
-
-    comparer = -1000
+    
     encoded = g.shared_data[0] # Dictionary from [encoded] => i
     textdict = g.shared_data[1] # Dictionary from [i] => plaintext
+    cache = g.shared_data[2]
 
-    toret = {
-        0 : 
-    }
-    for i in range(textdict.len()):
+    if query in cache:
+        return Flask.json.jsonify(cache[query])
+    else:
+
+        query = model.encode(query)
+        retjson = {}
+        for encode in encoded:
+            similarity = 1 - spatial.distance.cosine(encode, query)
+            retjson[textdict[encoded[encode]]]
+
+
+    
 
 
 
